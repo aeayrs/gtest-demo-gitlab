@@ -37,7 +37,25 @@ foreach(_source ${GOOGLETEST_SOURCES})
     set_source_files_properties(${_source} PROPERTIES GENERATED 1)
 endforeach()
 
-add_library(googletest ${GOOGLETEST_SOURCES})
+add_library(gtest ${GOOGLETEST_SOURCES})
+
+set(GOOGLEMOCK_ROOT external/googletest/googlemock CACHE STRING "Google Mock source root")
+
+include_directories(
+    ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}
+    ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/include
+    )
+
+set(GOOGLEMOCK_SOURCES
+    ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock-all.cc
+    ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock_main.cc
+    )
+
+foreach(_source ${GOOGLEMOCK_SOURCES})
+    set_source_files_properties(${_source} PROPERTIES GENERATED 1)
+endforeach()
+
+add_library(gmock ${GOOGLEMOCK_SOURCES})
 
 add_executable(
     unit_tests
@@ -50,7 +68,8 @@ add_dependencies(unit_tests googletest)
 
 target_link_libraries(
     unit_tests
-    googletest
+    gtest
+    gmock
     example
     pthread
     )
